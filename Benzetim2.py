@@ -11,9 +11,11 @@ Demo = True
 
 
 if not Demo:
-    TalepMin, TalepMax = input("Talep dağılımın aralığı (arada boşluk bırakarak 'Min Max' şeklinde yazınız): ").split()
+    TalepMin, TalepMax = input(
+        "Talep dağılımın aralığı (arada boşluk bırakarak 'Min Max' şeklinde yazınız): "
+    ).split()
     # Olasılık dağılımı ile yapılabilir sonra
-    TedarikSure = input("Tedarik süresi: ")
+    # TedarikSure = input("Tedarik süresi: ")
     Stok = input("Başlangıç stok: ")
     # Siparis = input("Sipariş miktarı (Q): ")
     # MinStok = input("Yeniden sipariş noktası (R): ")
@@ -26,11 +28,9 @@ else:
     # Demo data
     TalepMin = 80
     TalepMax = 130
-    # Olasılık dağılımı ile yapılabilir sonra
-    TedarikSure = 2
     BasStok = 224
-    Siparis = [224,275,325,400]
-    MinStok = [200,225,250,275,300]
+    Siparis = [224, 275, 325, 400]
+    MinStok = [200, 225, 250, 275, 300]
     KayipMaliye = 100
     StokMaliye = 0.2
     SiparisMaliye = 50
@@ -49,7 +49,6 @@ StokMaliyeList = []
 KayipMaliyeList = []
 SiparisMaliyeList = []
 ToplamMaliyeList = []
-
 
 
 def main():
@@ -75,6 +74,7 @@ def main():
 
                 if StokPoz[-1] < R:
                     SiparisList.append(Q)
+                    TedarikSure = TedarikSureUret()
                     TedarikSureList.append(TedarikSure)
                     SiparisGelis = TedarikSure
                 else:
@@ -99,13 +99,10 @@ def main():
 
             Toplam = round(sum(ToplamMaliyeList), 1)
             GeciciMaliyeList.append(Toplam)
-            # BenzetimTablo()
-            # print("Q={} ve R={} için, Toplam maliyet: {} \n\n".format(Q, R, Toplam))
+            BenzetimTablo()
+            print("Q={} ve R={} için, Toplam maliyet: {} \n\n".format(Q, R, Toplam))
 
-            
         NihaiMaliyeList.append(GeciciMaliyeList)
-
-    
 
 
 def ClearData():
@@ -124,6 +121,10 @@ def ClearData():
 
 def TalepUret():
     return int(random.uniform(TalepMin, TalepMax))
+
+
+def TedarikSureUret():
+    return int(random.choices([2, 3], weights=[0.75, 0.25])[0])
 
 
 def BenzetimTablo():
@@ -151,10 +152,8 @@ def KararTablo():
     Table.columns.append(MinStok, "R \\ Q")
     for col in range(len(NihaiMaliyeList)):
         Table.columns.append(NihaiMaliyeList[col], str(Siparis[col]))
-        
+
     print(Table)
-
-
 
 
 if __name__ == "__main__":
