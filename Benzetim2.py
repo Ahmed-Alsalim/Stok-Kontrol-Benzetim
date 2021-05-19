@@ -23,6 +23,7 @@ BenzetimTablolarYazdir = True
 ########################################
 
 
+# Kullanılacak listeler tanımlanır
 BenZam = list(range(1, DevreSayi + 1))
 NihaiMaliyeList = []
 StokList = []
@@ -50,15 +51,17 @@ def main():
                 TalepList.append(TalepUret())
                 EldeKalan.append(StokList[-1] - TalepList[-1])
 
+                # Talep, stoktan fazla ise kayıp satış miktarı hesaplanır.
+                # değil ise kayıp 0 olarak kaydedilir
                 if EldeKalan[-1] < 0:
                     KayipList.append(-EldeKalan[-1])
                     EldeKalan[-1] = 0
                 else:
                     KayipList.append(0)
 
+                # Stok pozisyonu bulup, minimum stok seviyesinden az ise yeni sipariş açar
                 Pozis = StokPoz[-1] - TalepList[-1] + KayipList[-1] + SiparisList[-1]
                 StokPoz.append(Pozis)
-
                 if StokPoz[-1] < R:
                     SiparisList.append(Q)
                     TedarikSure = TedarikSureUret()
@@ -67,30 +70,30 @@ def main():
                     SiparisList.append(0)
                     TedarikSureList.append(0)
                     
+                # Açılan siparişin teslim zamanı geldiğinde stoka ekler
                 if len(TedarikSureList) >= 3 and TedarikSureList[-3] == 3:
                     if TedarikSureList[-2] == 2:
                         StokList.append(EldeKalan[-1] + SiparisList[-2] + SiparisList[-3])
                     else:
                         StokList.append(EldeKalan[-1] + SiparisList[-3])
-
                 elif len(TedarikSureList) >= 2 and TedarikSureList[-2] == 2:
                     StokList.append(EldeKalan[-1] + SiparisList[-2])
-
                 else:
                     StokList.append(EldeKalan[-1])
 
+                # Oluşan maliyetler hesaplar
                 StokMaliyeList.append(EldeKalan[-1] * StokMaliye)
                 KayipMaliyeList.append(KayipList[-1] * KayipMaliye)
                 SiparisMaliyeList.append((SiparisList[-1] / Q) * SiparisMaliye)
-                ToplamMaliyeList.append(
-                    StokMaliyeList[-1] + KayipMaliyeList[-1] + SiparisMaliyeList[-1]
-                )
+                ToplamMaliyeList.append(StokMaliyeList[-1] + KayipMaliyeList[-1] + SiparisMaliyeList[-1])
             StokList.pop()
             StokPoz.pop(0)
             SiparisList.pop(0)
 
+            # Tablonun toplam maliyeti hesaplayıp listeye ekler
             Toplam = round(sum(ToplamMaliyeList), 1)
             GeciciMaliyeList.append(Toplam)
+            # Kullanıcı tablo yazdırmayı seçmiş ise yazdırılır
             if BenzetimTablolarYazdir:
                 BenzetimTablo()
                 print("Q={} ve R={} için, Toplam maliyet: {} \n\n".format(Q, R, Toplam))
@@ -98,6 +101,7 @@ def main():
         NihaiMaliyeList.append(GeciciMaliyeList)
 
 
+# Benzetim tabloları hesaplamak için önceki verileri temizler
 def ClearData():
     StokList.clear()
     TalepList.clear()
@@ -112,21 +116,24 @@ def ClearData():
     ToplamMaliyeList.clear()
 
 
+# Talep miktarı, verilen aralıkta rastgele değer döndürür
 def TalepUret():
     return int(random.uniform(TalepMin, TalepMax))
 
 
+# Tedarik süre, verilen kümeden ve dağılıma göre rastgele seçer
 def TedarikSureUret():
     return int(random.choices(TedarikSure, weights=TedarikSureOlasilik)[0])
 
 
+# Benzetim tabloları yazdırır
 def BenzetimTablo():
-    Table = BeautifulTable()
+    Table = BeautifulTable(maxwidth=150)
     Table.columns.append(BenZam, "Benzetim\nzamanı")
     Table.columns.append(StokList, "Başlangıç\nstok")
     Table.columns.append(TalepList, "Talep")
     Table.columns.append(EldeKalan, "Elde\nkalan")
-    Table.columns.append(KayipList, "Kayıp")
+    Table.columns.append(KayipList, "Kayıp\nsatış")
     Table.columns.append(StokPoz, "Stok\npozisyon")
     Table.columns.append(SiparisList, "Açılan\nsipariş")
     Table.columns.append(TedarikSureList, "Tedarik\nsüresi")
@@ -135,11 +142,11 @@ def BenzetimTablo():
     Table.columns.append(SiparisMaliyeList, "Sipariş\nmaliyeti")
     Table.columns.append(ToplamMaliyeList, "Toplam\nmaliye")
     Table.set_style(BeautifulTable.STYLE_SEPARATED)
-    Table.columns.width = 12
 
     print(Table)
 
 
+# En düşük maliyetli seçenek işaretleyerek nihai karar tabloyu yazdırır
 def KararTablo():
     minindex = []
     minvalue = inf
@@ -164,6 +171,7 @@ def KararTablo():
     )
 
 
+# Kod çalıştırıldığında çalışacak fonksiyonlar
 if __name__ == "__main__":
     main()
     KararTablo()
