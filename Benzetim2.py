@@ -2,8 +2,8 @@
 """   B181200553     """
 """     Ödev 2       """
 
-from math import inf
 import random
+from math import inf
 from beautifultable import BeautifulTable
 
 
@@ -19,7 +19,7 @@ KayipMaliye = 100
 StokMaliye = 0.2
 SiparisMaliye = 50
 DevreSayi = 5
-BenzetimTablolarYazdir = False
+BenzetimTablolarYazdir = True
 ########################################
 
 
@@ -63,14 +63,19 @@ def main():
                     SiparisList.append(Q)
                     TedarikSure = TedarikSureUret()
                     TedarikSureList.append(TedarikSure)
-                    SiparisGelis = TedarikSure
                 else:
                     SiparisList.append(0)
                     TedarikSureList.append(0)
-                    SiparisGelis -= 1
+                    
+                if len(TedarikSureList) >= 3 and TedarikSureList[-3] == 3:
+                    if TedarikSureList[-2] == 2:
+                        StokList.append(EldeKalan[-1] + SiparisList[-2] + SiparisList[-3])
+                    else:
+                        StokList.append(EldeKalan[-1] + SiparisList[-3])
 
-                if SiparisGelis == 0:
-                    StokList.append(EldeKalan[-1] + SiparisList[-3])
+                elif len(TedarikSureList) >= 2 and TedarikSureList[-2] == 2:
+                    StokList.append(EldeKalan[-1] + SiparisList[-2])
+
                 else:
                     StokList.append(EldeKalan[-1])
 
@@ -130,7 +135,7 @@ def BenzetimTablo():
     Table.columns.append(SiparisMaliyeList, "Sipariş\nmaliyeti")
     Table.columns.append(ToplamMaliyeList, "Toplam\nmaliye")
     Table.set_style(BeautifulTable.STYLE_SEPARATED)
-    Table.columns.width = 11
+    Table.columns.width = 12
 
     print(Table)
 
@@ -145,11 +150,12 @@ def KararTablo():
     NihaiMaliyeList[minindex[0]][minindex[1]] = "> {} <".format(minvalue)
 
     Table = BeautifulTable()
+    Table.set_style(BeautifulTable.STYLE_GRID)
     Table.columns.append(MinStok, "R \\ Q")
     for col in range(len(NihaiMaliyeList)):
         Table.columns.append(NihaiMaliyeList[col], str(SiparisMiktar[col]))
 
-    Table.set_style(BeautifulTable.STYLE_GRID)
+    print("KARAR TABLOSU:")
     print(Table)
     print(
         "En düşük maliyet ({}) için, Sipariş miktarı (Q) = {} ve Yeniden sipariş noktası (R) = {} ".format(
