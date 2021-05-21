@@ -20,6 +20,7 @@ StokMaliye = 0.2
 SiparisMaliye = 50
 DevreSayi = 5
 BenzetimTablolarYazdir = True
+TxtDosyasindaKaydet = True
 ########################################
 
 
@@ -96,7 +97,7 @@ def main():
             # Kullanıcı tablo yazdırmayı seçmiş ise yazdırılır
             if BenzetimTablolarYazdir:
                 BenzetimTablo()
-                print("Q={} ve R={} için, Toplam maliyet: {} \n\n".format(Q, R, Toplam))
+                SaveTxt("Q={} ve R={} için, Toplam maliyet: {} \n\n".format(Q, R, Toplam))
 
         NihaiMaliyeList.append(GeciciMaliyeList)
 
@@ -143,7 +144,7 @@ def BenzetimTablo():
     Table.columns.append(ToplamMaliyeList, "Toplam\nmaliye")
     Table.set_style(BeautifulTable.STYLE_SEPARATED)
 
-    print(Table)
+    SaveTxt(Table)
 
 
 # En düşük maliyetli seçenek işaretleyerek nihai karar tabloyu yazdırır
@@ -162,16 +163,28 @@ def KararTablo():
     for col in range(len(NihaiMaliyeList)):
         Table.columns.append(NihaiMaliyeList[col], str(SiparisMiktar[col]))
 
-    print("KARAR TABLOSU:")
-    print(Table)
-    print(
+    SaveTxt("KARAR TABLOSU:")
+    SaveTxt(Table)
+    SaveTxt(
         "En düşük maliyet ({}) için, Sipariş miktarı (Q) = {} ve Yeniden sipariş noktası (R) = {} ".format(
             minvalue, SiparisMiktar[minindex[0]], MinStok[minindex[1]]
         )
     )
+    SaveTxt("*" * 125 + "\n\n")
+
+
+# Çıktı ekrana yazdırır ve kullanıcı isterse text dosyasına yazdırır
+def SaveTxt(txt):
+    print(str(txt))
+    if TxtDosyasindaKaydet:
+        with open("Benzetim Tablosu.txt", "a", encoding="UTF-8") as f:
+            f.write((str(txt) + "\n"))
+SaveTxt("*Tablo düzgün görünmüyorsa ekranı büyütünüz.\n")
 
 
 # Kod çalıştırıldığında çalışacak fonksiyonlar
 if __name__ == "__main__":
     main()
     KararTablo()
+    if TxtDosyasindaKaydet:
+        print("Benzetim Tablosu.txt dosyasında kaydedildi.")
