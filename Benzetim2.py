@@ -1,6 +1,5 @@
 """   Ahmed Tawfiq   """
 """   B181200553     """
-"""     Ödev 2       """
 
 import random
 from math import inf
@@ -48,7 +47,7 @@ def main():
             StokList.append(BasStok)
             StokPoz.append(BasStok)
             SiparisList.append(0)
-            for B in BenZam:
+            for _ in BenZam:
                 TalepList.append(TalepUret())
                 EldeKalan.append(StokList[-1] - TalepList[-1])
 
@@ -70,11 +69,13 @@ def main():
                 else:
                     SiparisList.append(0)
                     TedarikSureList.append(0)
-                    
+
                 # Açılan siparişin teslim zamanı geldiğinde stoka ekler
                 if len(TedarikSureList) >= 3 and TedarikSureList[-3] == 3:
                     if TedarikSureList[-2] == 2:
-                        StokList.append(EldeKalan[-1] + SiparisList[-2] + SiparisList[-3])
+                        StokList.append(
+                            EldeKalan[-1] + SiparisList[-2] + SiparisList[-3]
+                        )
                     else:
                         StokList.append(EldeKalan[-1] + SiparisList[-3])
                 elif len(TedarikSureList) >= 2 and TedarikSureList[-2] == 2:
@@ -86,7 +87,9 @@ def main():
                 StokMaliyeList.append(EldeKalan[-1] * StokMaliye)
                 KayipMaliyeList.append(KayipList[-1] * KayipMaliye)
                 SiparisMaliyeList.append((SiparisList[-1] / Q) * SiparisMaliye)
-                ToplamMaliyeList.append(StokMaliyeList[-1] + KayipMaliyeList[-1] + SiparisMaliyeList[-1])
+                ToplamMaliyeList.append(
+                    StokMaliyeList[-1] + KayipMaliyeList[-1] + SiparisMaliyeList[-1]
+                )
             StokList.pop()
             StokPoz.pop(0)
             SiparisList.pop(0)
@@ -96,8 +99,8 @@ def main():
             GeciciMaliyeList.append(Toplam)
             # Kullanıcı tablo yazdırmayı seçmiş ise yazdırılır
             if BenzetimTablolarYazdir:
+                SaveTxt(f"\n\nQ={Q} ve R={R} için, Toplam maliyet: {Toplam}")
                 BenzetimTablo()
-                SaveTxt("Q={} ve R={} için, Toplam maliyet: {} \n\n".format(Q, R, Toplam))
 
         NihaiMaliyeList.append(GeciciMaliyeList)
 
@@ -155,7 +158,7 @@ def KararTablo():
         if min(i) < minvalue:
             minvalue = min(i)
             minindex = [NihaiMaliyeList.index(i), i.index(min(i))]
-    NihaiMaliyeList[minindex[0]][minindex[1]] = "> {} <".format(minvalue)
+    NihaiMaliyeList[minindex[0]][minindex[1]] = f"> {minvalue} <"
 
     Table = BeautifulTable()
     Table.set_style(BeautifulTable.STYLE_GRID)
@@ -163,22 +166,22 @@ def KararTablo():
     for col in range(len(NihaiMaliyeList)):
         Table.columns.append(NihaiMaliyeList[col], str(SiparisMiktar[col]))
 
-    SaveTxt("KARAR TABLOSU:")
+    SaveTxt("\n\nKARAR TABLOSU:")
     SaveTxt(Table)
     SaveTxt(
-        "En düşük maliyet ({}) için, Sipariş miktarı (Q) = {} ve Yeniden sipariş noktası (R) = {} ".format(
-            minvalue, SiparisMiktar[minindex[0]], MinStok[minindex[1]]
-        )
+        f"En düşük maliyet ({minvalue}) için, Sipariş miktarı (Q) = {SiparisMiktar[minindex[0]]} ve Yeniden sipariş noktası (R) = {MinStok[minindex[1]]} "
     )
     SaveTxt("*" * 125 + "\n\n")
 
 
 # Çıktı ekrana yazdırır ve kullanıcı isterse text dosyasına yazdırır
 def SaveTxt(txt):
-    print(str(txt))
+    print(txt)
     if TxtDosyasindaKaydet:
         with open("Benzetim Tablosu.txt", "a", encoding="UTF-8") as f:
             f.write((str(txt) + "\n"))
+
+
 SaveTxt("*Tablo düzgün görünmüyorsa ekranı büyütünüz.\n")
 
 
